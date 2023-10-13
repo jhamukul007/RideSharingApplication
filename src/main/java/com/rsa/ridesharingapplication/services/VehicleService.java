@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class VehicleService {
     private final List<Vehicle> vehicleList;
@@ -95,6 +96,22 @@ public class VehicleService {
                 .build());
         logger.log("Found Car number and trip details  " + rideBooking);
         return rideBooking;
+    }
+
+    public void getOfferedRideHistory(Long phone) {
+        User user = userService.findByPhone(phone).orElseThrow(() -> new UserNotFoundException());
+        List<VehicleRide> rides = vehicleRideList.stream().filter(ride -> Objects.deepEquals(ride.getVehicle().getUser().getPhone(), user.getPhone())).collect(Collectors.toList());
+        System.out.println("Offered Ride History !!!!");
+        String history = "";
+        for (VehicleRide ride : rides) {
+            history += String.format("Source : %s \n" +
+                            "Destination: %s \n" +
+                            "Vehicle Number: %s \n" +
+                            "Offered Seat: %s \n" +
+                            "Date : %s ", ride.getSource(), ride.getDestination(), ride.getVehicle().getNumber(), ride.getSeatOffered(),
+                    ride.getScheduledTime());
+        }
+        logger.log(history);
     }
 
 }

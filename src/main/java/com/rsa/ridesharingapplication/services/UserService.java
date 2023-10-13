@@ -2,6 +2,7 @@ package com.rsa.ridesharingapplication.services;
 
 import com.rsa.ridesharingapplication.enums.Gender;
 import com.rsa.ridesharingapplication.exceptions.UserFoundException;
+import com.rsa.ridesharingapplication.exceptions.UserNotFoundException;
 import com.rsa.ridesharingapplication.logging.Logger;
 import com.rsa.ridesharingapplication.models.User;
 import lombok.NonNull;
@@ -37,4 +38,6 @@ public class UserService {
     public Optional<User> findByPhone(Long phone) {
         return userList.stream().filter(user -> Objects.deepEquals(phone, user.getPhone())).findFirst();
     }
+
+
 }

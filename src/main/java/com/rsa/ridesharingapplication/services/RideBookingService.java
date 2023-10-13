@@ -24,12 +24,16 @@ public class RideBookingService {
 
     public void startRide(String rideId) {
         RideBooking rideBooking = getBookedRideDetailsById(rideId).orElseThrow(() -> new RideBookingDetailsNotFoundException());
+        if (!RideBookingStatus.SCHEDULED.equals(rideBooking.getRideBookingStatus()))
+            throw new IllegalStateException("Ride not in scheduled state");
         rideBooking.getVehicleRide().setRideStatus(RideStatus.ONGOING);
         rideBooking.setRideBookingStatus(RideBookingStatus.ONGOING);
     }
 
     public void markEndRide(String rideId) {
         RideBooking rideBooking = getBookedRideDetailsById(rideId).orElseThrow(() -> new RideBookingDetailsNotFoundException());
+        if (!RideBookingStatus.ONGOING.equals(rideBooking.getRideBookingStatus()))
+            throw new IllegalStateException("Ride not in ongoing state");
         rideBooking.getVehicleRide().setRideStatus(RideStatus.COMPLETED);
         rideBooking.setRideBookingStatus(RideBookingStatus.COMPLETED);
     }

@@ -70,6 +70,11 @@ class RideSharingApplicationTests {
         vehicleService.searchRide(808080088L, "Bangalore", "Mumbai", 2, LocalDateTime.now().plusDays(2));
     }
 
+    @Test
+    void offerRideHistory() {
+        searchRide();
+        vehicleService.getOfferedRideHistory(8989898989L);
+    }
 
 
     @Test
