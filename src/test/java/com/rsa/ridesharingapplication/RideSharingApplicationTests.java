@@ -3,6 +3,7 @@ package com.rsa.ridesharingapplication;
 import com.rsa.ridesharingapplication.enums.Gender;
 import com.rsa.ridesharingapplication.logging.ConsoleLogger;
 import com.rsa.ridesharingapplication.logging.Logger;
+import com.rsa.ridesharingapplication.models.RideBooking;
 import com.rsa.ridesharingapplication.services.RideBookingService;
 import com.rsa.ridesharingapplication.services.UserService;
 import com.rsa.ridesharingapplication.services.VehicleService;
@@ -24,13 +25,14 @@ class RideSharingApplicationTests {
     private RideSearchStrategy rideSearchStrategy;
 
     private RideBookingService rideBookingService;
-
+    private RideBooking rideBooking1;
+    private RideBooking rideBooking2;
     @BeforeAll
     public void init() {
         this.logger = new ConsoleLogger();
         this.userService = new UserService(logger);
         this.rideSearchStrategy = new LowestDurationRideSearchStrategy();
-        this.rideBookingService = new RideBookingService();
+        this.rideBookingService = new RideBookingService(logger);
         this.vehicleService = new VehicleService(logger, userService, rideSearchStrategy, rideBookingService);
     }
 
@@ -66,16 +68,37 @@ class RideSharingApplicationTests {
     @Test
     void searchRide() {
         offerRides();
-        vehicleService.searchRide(9090909111L, "Bangalore", "Mumbai", 4, LocalDateTime.now().plusDays(2));
-        vehicleService.searchRide(808080088L, "Bangalore", "Mumbai", 2, LocalDateTime.now().plusDays(2));
+        rideBooking1 = vehicleService.searchRide(9090909111L, "Bangalore", "Mumbai", 4, LocalDateTime.now().plusDays(2));
+        rideBooking2 =vehicleService.searchRide(808080088L, "Bangalore", "Mumbai", 2, LocalDateTime.now().plusDays(2));
+    }
+
+    @Test
+    void startRide() {
+        searchRide();
+        rideBookingService.startRide(rideBooking1.getId());
+        rideBookingService.startRide(rideBooking2.getId());
+    }
+
+    @Test
+    void endRide() {
+        startRide();
+        rideBookingService.markEndRide(rideBooking1.getId());
+        rideBookingService.markEndRide(rideBooking2.getId());
     }
 
     @Test
     void offerRideHistory() {
-        searchRide();
+        endRide();
         vehicleService.getOfferedRideHistory(8989898989L);
+        vehicleService.getOfferedRideHistory(11111111L);
     }
 
+    @Test
+    void rideHistoryByRider() {
+        offerRideHistory();
+        vehicleService.getRiderHistory(9090909111L);
+        vehicleService.getRiderHistory(808080088L);
+    }
 
     @Test
     void registerUserFail() {

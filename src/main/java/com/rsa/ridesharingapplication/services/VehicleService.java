@@ -51,7 +51,7 @@ public class VehicleService {
                 .totalSeat(totalSeat)
                 .number(vehicleNumber)
                 .status(VehicleStatus.ACTIVE)
-                .user(user)
+                .driver(user)
                 .build();
         vehicleList.add(vehicle);
         logger.log(String.format("vehicle %s has been added to user %s ", vehicleNumber, user.getName()));
@@ -100,10 +100,27 @@ public class VehicleService {
 
     public void getOfferedRideHistory(Long phone) {
         User user = userService.findByPhone(phone).orElseThrow(() -> new UserNotFoundException());
-        List<VehicleRide> rides = vehicleRideList.stream().filter(ride -> Objects.deepEquals(ride.getVehicle().getUser().getPhone(), user.getPhone())).collect(Collectors.toList());
+        List<VehicleRide> rides = vehicleRideList.stream().filter(ride -> Objects.deepEquals(ride.getVehicle().getDriver().getPhone(), user.getPhone())).collect(Collectors.toList());
         System.out.println("Offered Ride History !!!!");
         String history = "";
         for (VehicleRide ride : rides) {
+            history += String.format("Source : %s \n" +
+                            "Destination: %s \n" +
+                            "Vehicle Number: %s \n" +
+                            "Offered Seat: %s \n" +
+                            "Date : %s ", ride.getSource(), ride.getDestination(), ride.getVehicle().getNumber(), ride.getSeatOffered(),
+                    ride.getScheduledTime());
+        }
+        logger.log(history);
+    }
+
+    public void getRiderHistory(Long phone){
+        User user = userService.findByPhone(phone).orElseThrow(() -> new UserNotFoundException());
+        List<RideBooking> bookedRide = rideBookingService.getAllRideBookByRider(user);
+        System.out.println("Ride History !!!!");
+        String history = "";
+        for (RideBooking rideBooking: bookedRide) {
+            VehicleRide ride = rideBooking.getVehicleRide();
             history += String.format("Source : %s \n" +
                             "Destination: %s \n" +
                             "Vehicle Number: %s \n" +

@@ -12,14 +12,14 @@ public class Vehicle extends BaseEntity {
     private String number;
     private String modelName;
     private Integer totalSeat;
-    private User user;
+    private User driver;
     private VehicleStatus status;
 
-    public Vehicle(String number, String modelName, Integer totalSeat, User user) {
+    public Vehicle(String number, String modelName, Integer totalSeat, User driver) {
         this.number = number;
         this.modelName = modelName;
         this.totalSeat = totalSeat;
-        this.user = user;
+        this.driver = driver;
         this.status = VehicleStatus.ACTIVE;
     }
 }
